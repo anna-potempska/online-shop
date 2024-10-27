@@ -5,14 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
-interface IProductCard {
-  title: string;
-  price: number;
-  currency?: string;
-  image: string;
-  description: string;
-}
+import { IProduct } from "../api/create-product";
 
 export default function ProductCard({
   title,
@@ -20,7 +13,7 @@ export default function ProductCard({
   image,
   currency = "€",
   description,
-}: IProductCard) {
+}: IProduct) {
   return (
     <div className="product-card">
       <Card sx={{ maxWidth: 345 }}>

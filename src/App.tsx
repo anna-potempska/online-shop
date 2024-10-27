@@ -1,7 +1,11 @@
 import { createTheme, ThemeProvider } from "@mui/material";
-import ProductCard from "./components/ProductCard";
 import NavBar from "./components/NavBar";
+import ProductList from "./components/ProductList";
+import DeleteProduct from "./components/DeleteProduct";
+import ProductForm from "./components/ProductForm";
+import { createProduct } from "./api/create-product";
 import "./App.css";
+import { useState } from "react";
 
 function App() {
   const theme = createTheme({
@@ -10,36 +14,33 @@ function App() {
     },
   });
 
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const handleOpenForm = () => {
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
-        <NavBar />
-        <ProductCard
-          title="Schuhe"
-          price={45}
-          image="/img/schuhe.jpeg"
-          description="Coole Adidas Schuhe"
+        <NavBar onIsOpenForm={handleOpenForm} />
+        <ProductForm
+          open={isFormOpen}
+          onClose={handleCloseForm}
+          onCreateProduct={createProduct}
         />
-
-        <ProductCard
-          title="Schuhe"
-          price={45}
-          image="/img/schuhe.jpeg"
-          description="Coole Adidas Schuhe"
-        />
-
-        <ProductCard
-          title="Schuhe"
-          price={45}
-          image="/img/schuhe.jpeg"
-          description="Coole Adidas Schuhe"
-        />
-
-        <ProductCard
-          title="Schuhe"
-          price={45}
-          image="/img/schuhe.jpeg"
-          description="Coole Adidas Schuhe"
+        <DeleteProduct />
+        <ProductList
+          products={[
+            { title: "product 1" } as any,
+            { title: "product 2" } as any,
+            { title: "product 3" } as any,
+            { title: "product 4" } as any,
+          ]}
         />
       </div>
     </ThemeProvider>
