@@ -4,25 +4,25 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useState } from "react";
+import { IProduct } from "../types";
 
-export default function DeleteProduct() {
-  const [open, setOpen] = useState(false);
+interface IDeleteProductProps {
+  product: IProduct;
+  isOpen: boolean;
+  handleClose: () => void;
+  onSubmit: () => void;
+}
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+export default function DeleteProduct({
+  product,
+  onSubmit,
+  isOpen,
+  handleClose,
+}: IDeleteProductProps) {
   return (
     <>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open alert dialog
-      </Button>
       <Dialog
-        open={open}
+        open={isOpen}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -35,7 +35,7 @@ export default function DeleteProduct() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={onSubmit} autoFocus>
             Delete
           </Button>
         </DialogActions>

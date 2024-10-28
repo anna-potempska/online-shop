@@ -6,8 +6,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
-import { IProduct } from "../api/create-product";
+import { useEffect, useState } from "react";
+import { IProduct } from "../types";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -23,19 +23,44 @@ const VisuallyHiddenInput = styled("input")({
 
 interface ProductFormProps {
   open: boolean;
+  dialogTitle: string;
+  actionTitle: string;
+  product?: IProduct;
   onClose: () => void;
-  onCreateProduct: (newProduct: IProduct) => Promise<Response>;
+  onSubmit: any;
 }
 
 export default function ProductForm({
   open,
+  dialogTitle,
+  actionTitle,
+  product,
   onClose,
-  onCreateProduct,
+  onSubmit,
 }: ProductFormProps) {
+  const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState<number>(0);
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
+  const [buttonText, setButtonText] = useState("Upload image");
+
+  useEffect(() => {
+    if (product) {
+      setId(product.id);
+      setTitle(product.title);
+      setDescription(product.description);
+      setPrice(product.price);
+      setImage(product.image);
+      setButtonText("Uploaded");
+    } else {
+      setId("");
+      setTitle("");
+      setDescription("");
+      setPrice(0);
+      setImage("");
+    }
+  }, [product]);
 
   function onAddTitle(e: React.ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
@@ -61,9 +86,30 @@ export default function ProductForm({
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setImage(base64String);
+        setButtonText("Uploaded");
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const onButtonSubmit = (event: any) => {
+    event.preventDefault();
+    const newProduct: any = {
+      title,
+      price,
+      image,
+      description,
+    };
+    if (product) {
+      newProduct["id"] = product.id;
+    }
+
+    onSubmit(newProduct);
+    setTitle("");
+    setPrice(0);
+    setImage("");
+    setDescription("");
+    onClose();
   };
 
   return (
@@ -73,20 +119,9 @@ export default function ProductForm({
         onClose={onClose}
         PaperProps={{
           component: "form",
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            const newProduct: IProduct = {
-              title,
-              price,
-              image,
-              description,
-            };
-            onCreateProduct(newProduct);
-            onClose();
-          },
         }}
       >
-        <DialogTitle>Add new product</DialogTitle>
+        <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <DialogContentText>Enter the product details here.</DialogContentText>
           <TextField
@@ -149,7 +184,7 @@ export default function ProductForm({
                 </svg>
               }
             >
-              Upload image
+              {buttonText}
               <VisuallyHiddenInput
                 type="file"
                 onChange={handleFileChange}
@@ -160,7 +195,7 @@ export default function ProductForm({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit">Add product</Button>
+          <Button onClick={onButtonSubmit}>{actionTitle}</Button>
         </DialogActions>
       </Dialog>
     </>

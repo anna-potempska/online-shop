@@ -5,19 +5,27 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { IProduct } from "../api/create-product";
+import { IProduct } from "../types";
+
+interface IProductCardProps {
+  product: IProduct;
+  onEditProduct: (product: IProduct) => void;
+  onDeleteProduct: (product: IProduct) => void;
+}
 
 export default function ProductCard({
-  title,
-  price,
-  image,
-  currency = "€",
-  description,
-}: IProduct) {
+  product,
+  onEditProduct,
+  onDeleteProduct,
+}: IProductCardProps) {
   return (
     <div className="product-card">
       <Card sx={{ maxWidth: 345 }}>
-        <CardMedia sx={{ height: 200 }} image={image} title={title} />
+        <CardMedia
+          sx={{ height: 200 }}
+          image={product.image}
+          title={product.title}
+        />
         <CardContent>
           <Box
             display="flex"
@@ -29,21 +37,21 @@ export default function ProductCard({
               component="div"
               sx={{ fontWeight: "bold" }}
             >
-              {title}
+              {product.title}
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {price} {currency}
+              {product.price} €
             </Typography>
           </Box>
           <Box display="flex" justifyContent="space-between" alignItems="left">
             <Typography variant="body1" sx={{ color: "#333" }}>
-              {description}
+              {product.description}
             </Typography>
           </Box>
         </CardContent>
         <CardActions>
-          <Button>Edit</Button>
-          <Button>Delete</Button>
+          <Button onClick={() => onEditProduct(product)}>Edit</Button>
+          <Button onClick={() => onDeleteProduct(product)}>Delete</Button>
         </CardActions>
       </Card>
     </div>

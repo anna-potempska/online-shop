@@ -1,27 +1,61 @@
+import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material";
 import NavBar from "./components/NavBar";
 import ProductList from "./components/ProductList";
 import DeleteProduct from "./components/DeleteProduct";
 import ProductForm from "./components/ProductForm";
-import { createProduct } from "./api/create-product";
+import useProduct from "./hooks/useProduct";
+import { IAction, IProduct } from "./types";
 import "./App.css";
-import { useState } from "react";
 
 function App() {
+  const { products, onCreateProduct, onEditProduct, onDeleteProduct } =
+    useProduct();
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [isDeleteFormOpen, setIsDeleteFormOpen] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(
+    undefined
+  );
+  const [action, setAction] = useState<IAction>({
+    action: onCreateProduct,
+    dialogActionTitle: "Add product",
+    dialogTitle: "Add new product",
+  });
+
   const theme = createTheme({
     typography: {
       htmlFontSize: 12,
     },
   });
 
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
   const handleOpenForm = () => {
-    setIsFormOpen(true);
+    setIsEditFormOpen(true);
   };
 
   const handleCloseForm = () => {
-    setIsFormOpen(false);
+    setIsEditFormOpen(false);
+    setSelectedProduct(undefined);
+    setAction({
+      action: onCreateProduct,
+      dialogActionTitle: "Add product",
+      dialogTitle: "Add new product",
+    });
+  };
+
+  const _onEditProduct = (product: IProduct) => {
+    setIsEditFormOpen(true);
+    setSelectedProduct(product);
+    setAction({
+      action: onEditProduct,
+      dialogActionTitle: "Edit product",
+      dialogTitle: "Edit product",
+    });
+  };
+
+  const _onDeleteProduct = (product: IProduct) => {
+    setIsDeleteFormOpen(true);
+    setSelectedProduct(product);
   };
 
   return (
@@ -29,18 +63,29 @@ function App() {
       <div className="App">
         <NavBar onIsOpenForm={handleOpenForm} />
         <ProductForm
-          open={isFormOpen}
+          product={selectedProduct}
+          open={isEditFormOpen}
           onClose={handleCloseForm}
-          onCreateProduct={createProduct}
+          onSubmit={action.action}
+          actionTitle={action.dialogActionTitle}
+          dialogTitle={action.dialogTitle}
         />
-        <DeleteProduct />
+        {selectedProduct && (
+          <DeleteProduct
+            product={selectedProduct}
+            handleClose={() => setIsDeleteFormOpen(false)}
+            isOpen={isDeleteFormOpen}
+            onSubmit={async () => {
+              await onDeleteProduct(selectedProduct);
+              setIsDeleteFormOpen(false);
+              setSelectedProduct(undefined);
+            }}
+          />
+        )}
         <ProductList
-          products={[
-            { title: "product 1" } as any,
-            { title: "product 2" } as any,
-            { title: "product 3" } as any,
-            { title: "product 4" } as any,
-          ]}
+          products={products}
+          onEditProduct={_onEditProduct}
+          onDeleteProduct={_onDeleteProduct}
         />
       </div>
     </ThemeProvider>

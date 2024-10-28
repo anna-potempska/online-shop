@@ -1,12 +1,6 @@
-export interface IProduct {
-  title: string;
-  price: number;
-  currency?: string;
-  image: string;
-  description: string;
-}
+import { INewProduct } from "../types";
 
-export const createProduct = (newProduct: IProduct) => {
+export const createProduct = (newProduct: INewProduct) => {
   return fetch("http://localhost:8000/products", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
