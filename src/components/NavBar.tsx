@@ -4,9 +4,15 @@ import Divider from "@mui/material/Divider";
 
 interface NavBarProps {
   onIsOpenForm: () => void;
+  search: string;
+  onSearch: (term: string) => void;
 }
 
-export default function NavBar({ onIsOpenForm }: NavBarProps) {
+export default function NavBar({
+  onIsOpenForm,
+  search,
+  onSearch,
+}: NavBarProps) {
   return (
     <>
       <div className="navbar">
@@ -31,6 +37,8 @@ export default function NavBar({ onIsOpenForm }: NavBarProps) {
             label="Search product"
             variant="outlined"
             size="small"
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
           />
           <MuiButton
             variant="contained"

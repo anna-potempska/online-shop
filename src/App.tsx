@@ -9,11 +9,17 @@ import { IAction, IProduct } from "./types";
 import "./App.css";
 
 function App() {
-  const { products, onCreateProduct, onEditProduct, onDeleteProduct } =
-    useProduct();
+  const {
+    products,
+    onCreateProduct,
+    onEditProduct,
+    onDeleteProduct,
+    search,
+    filteredProducts,
+    onSearch,
+  } = useProduct();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isDeleteFormOpen, setIsDeleteFormOpen] = useState(false);
-
   const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(
     undefined
   );
@@ -61,7 +67,11 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
-        <NavBar onIsOpenForm={handleOpenForm} />
+        <NavBar
+          onIsOpenForm={handleOpenForm}
+          search={search}
+          onSearch={onSearch}
+        />
         <ProductForm
           product={selectedProduct}
           open={isEditFormOpen}
@@ -86,6 +96,7 @@ function App() {
           products={products}
           onEditProduct={_onEditProduct}
           onDeleteProduct={_onDeleteProduct}
+          productsList={filteredProducts}
         />
       </div>
     </ThemeProvider>

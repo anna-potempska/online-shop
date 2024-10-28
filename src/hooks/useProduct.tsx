@@ -7,10 +7,28 @@ import { INewProduct, IProduct } from "../types";
 
 export const useProduct = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    if (search.length === 0) {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(
+        (products as IProduct[]).filter((product) =>
+          product.title.toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    }
+  }, [search, products]);
+
+  const onSearch = (term: string) => {
+    setSearch(term);
+  };
 
   const fetchProducts = () => {
     getProducts().then((data) => {
@@ -39,6 +57,10 @@ export const useProduct = () => {
     onCreateProduct,
     onEditProduct,
     onDeleteProduct,
+    search,
+    filteredProducts,
+    onSearch,
+    setSearch,
   };
 };
 

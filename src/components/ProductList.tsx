@@ -5,12 +5,14 @@ interface IProductListProps {
   products: IProduct[];
   onEditProduct: (product: IProduct) => void;
   onDeleteProduct: (product: IProduct) => void;
+  productsList: IProduct[];
 }
 
 export default function ProductsList({
   products,
   onEditProduct,
   onDeleteProduct,
+  productsList,
 }: IProductListProps) {
   return (
     <>
@@ -18,7 +20,7 @@ export default function ProductsList({
         <h2>Our Products</h2>
       </div>
       <div className="products-list">
-        {products.map((product, id) => (
+        {productsList.map((product, id) => (
           <ProductCard
             product={product}
             onEditProduct={onEditProduct}
